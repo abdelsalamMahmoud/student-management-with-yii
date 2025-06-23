@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "file".
@@ -36,13 +37,34 @@ class File extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'course_id', 'created_at'], 'default', 'value' => null],
-            [['uploaded_by', 'filename', 'filepath'], 'required'],
+            [['uploaded_by', 'course_id'], 'required'],
             [['uploaded_by', 'course_id', 'created_at'], 'integer'],
-            [['filename', 'filepath', 'type'], 'string', 'max' => 255],
-            [['course_id'], 'exist', 'skipOnError' => true, 'targetClass' => Course::class, 'targetAttribute' => ['course_id' => 'id']],
-            [['uploaded_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['uploaded_by' => 'id']],
+            [['filename'], 'file',
+                'skipOnEmpty' => false,
+                'extensions' => 'pdf, doc, docx, jpg, png, jpeg',
+                'maxSize' => 10 * 1024 * 1024,
+                'checkExtensionByMimeType' => true
+            ],
+            [['filepath', 'type'], 'string', 'max' => 255],
+            [['created_at'], 'default', 'value' => time()],
         ];
+    }
+
+    public function upload()
+    {
+        if ($this->validate()) {
+            $file = UploadedFile::getInstance($this, 'filename');
+            if ($file) {
+                $this->filename = $file->baseName; // Original name
+                $this->type = $file->type;
+                $newName = Yii::$app->security->generateRandomString() . '.' . $file->extension;
+                $this->filepath = '/uploads/' . $newName;
+
+                $path = Yii::getAlias('@frontend/web/uploads/') . $newName;
+                return $file->saveAs($path);
+            }
+        }
+        return false;
     }
 
     /**

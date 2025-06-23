@@ -16,7 +16,7 @@ $this->title = 'Available Courses';
     <tbody>
     <?php foreach ($courses as $course): ?>
         <tr>
-            <td><?= Html::encode($course->name) ?></td>
+            <td><?= Html::encode($course->title) ?></td>
             <td><?= Html::encode($course->teacher->username ?? 'N/A') ?></td>
             <td>
                 <?= Html::a('Register', ['register', 'id' => $course->id], ['class' => 'btn btn-success']) ?>

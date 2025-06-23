@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 $this->title = 'My Courses';
 ?>
 <h1>My Courses & Grades</h1>
@@ -14,7 +17,7 @@ $this->title = 'My Courses';
     <tbody>
     <?php foreach ($registrations as $registration): ?>
         <tr>
-            <td><?= Html::encode($registration->course->name) ?></td>
+            <td><?= Html::encode($registration->course->title) ?></td>
             <td><?= Html::encode($registration->course->teacher->username ?? 'N/A') ?></td>
             <td>
                 <?php if (!empty($registration->grades)): ?>

@@ -17,7 +17,7 @@ class m250620_041336_create_grade_table extends Migration
             'registration_id' => $this->integer()->notNull(),
             'grade_value' => $this->decimal(5,2)->notNull(),
             'grade_type' => $this->string()->defaultValue('final'),
-            'added_by' => $this->integer(), // teacher id (optional)
+            'added_by' => $this->integer(),
             'created_at' => $this->integer(),
         ]);
 

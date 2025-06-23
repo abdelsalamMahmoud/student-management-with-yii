@@ -65,7 +65,7 @@ class StudentController extends Controller
         $registration = new Registration();
         $registration->student_id = Yii::$app->user->id;
         $registration->course_id = $id;
-        $registration->created_at = time(); // if needed
+        $registration->registered_at = time();
         $registration->save();
 
         return $this->redirect(['student/my-courses']);
