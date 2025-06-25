@@ -73,14 +73,20 @@ class SiteController extends Controller
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect(['/admin/dashboard']);
         }
 
         $this->layout = 'blank';
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            if (Yii::$app->user->identity->role === 'admin') {
+                return $this->redirect(['/admin/dashboard']);
+            } else {
+                Yii::$app->user->logout();
+                Yii::$app->session->setFlash('error', 'Access denied. Admins only.');
+                return $this->goHome();
+            }
         }
 
         $model->password = '';

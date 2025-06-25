@@ -2,8 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\models\User;
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use yii\filters\AccessControl;
 use common\models\Course;
@@ -55,6 +57,37 @@ class TeacherController extends Controller
         }
 
         return $this->render('create-course', compact('model'));
+    }
+
+    public function actionViewCourse($id)
+    {
+        $model = Course::findOne($id);
+        return $this->render('view-course', ['model' => $model]);
+    }
+
+    public function actionUpdateCourse($id)
+    {
+        $model = $this->findCourse($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view-course', 'id' => $model->id]);
+        }
+
+        return $this->render('update-course', compact('model'));
+    }
+
+    public function actionDeleteCourse($id)
+    {
+        $course = Course::findOne($id);
+
+        if ($course && $course->teacher_id == Yii::$app->user->id) {
+            $course->delete();
+            Yii::$app->session->setFlash('success', 'Course deleted successfully.');
+        } else {
+            Yii::$app->session->setFlash('error', 'You are not allowed to delete this course.');
+        }
+
+        return $this->redirect(['dashboard']);
     }
 
     public function actionStudents($course_id)
@@ -117,5 +150,10 @@ class TeacherController extends Controller
     public function actionUploadGradesExcel($course_id)
     {
         return $this->render('upload-grades-excel', compact('course_id'));
+    }
+
+    protected function findCourse($id)
+    {
+        return Course::findOne($id) ?? throw new NotFoundHttpException('Course not found.');
     }
 }
