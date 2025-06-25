@@ -12,6 +12,7 @@ $this->title = 'My Courses';
         <th>Course</th>
         <th>Teacher</th>
         <th>Grades</th>
+        <th>Files</th>
     </tr>
     </thead>
     <tbody>
@@ -32,6 +33,9 @@ $this->title = 'My Courses';
                 <?php else: ?>
                     <em>No grades yet</em>
                 <?php endif; ?>
+            </td>
+            <td>
+                <?= Html::a('Show Files', ['student/course-files', 'id' => $registration->course_id], ['class' => 'btn btn-sm btn-info']) ?>
             </td>
         </tr>
     <?php endforeach; ?>

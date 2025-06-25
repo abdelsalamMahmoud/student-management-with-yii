@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\AccessRule;
 use common\models\User;
 use Yii;
 use yii\web\Controller;
@@ -20,11 +21,13 @@ class TeacherController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'ruleConfig' => [
+                    'class' => AccessRule::class,
+                ],
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['@'],
-                        'matchCallback' => fn() => Yii::$app->user->identity->role === 'teacher',
+                        'roles' => ['teacher'],
                     ],
                 ],
             ],
@@ -90,6 +93,12 @@ class TeacherController extends Controller
         return $this->redirect(['dashboard']);
     }
 
+    protected function findCourse($id)
+    {
+        return Course::findOne($id) ?? throw new NotFoundHttpException('Course not found.');
+    }
+
+
     public function actionStudents($course_id)
     {
         $course = Course::findOne(['id' => $course_id, 'teacher_id' => Yii::$app->user->id]);
@@ -110,21 +119,9 @@ class TeacherController extends Controller
         if (Yii::$app->request->isPost) {
             $model->filename = UploadedFile::getInstance($model, 'filename');
 
-            if ($model->filename && $model->validate()) {
-
-                $newName = Yii::$app->security->generateRandomString() . '.' . $model->filename->extension;
-                $filePath = 'uploads/' . $newName;
-                $fullPath = Yii::getAlias('@webroot/') . $filePath;
-
-                if ($model->filename->saveAs($fullPath)) {
-                    $model->filepath = '/' . $filePath;
-                    $model->type = $model->filename->type;
-
-                    if ($model->save(false)) {
-                        Yii::$app->session->setFlash('success', 'File uploaded successfully!');
-                        return $this->redirect(['dashboard']);
-                    }
-                }
+            if ($model->upload() && $model->save(false)) {
+                Yii::$app->session->setFlash('success', 'File uploaded successfully!');
+                return $this->redirect(['dashboard']);
             }
 
             Yii::$app->session->setFlash('error', 'Upload failed: ' . print_r($model->errors, true));
@@ -147,13 +144,4 @@ class TeacherController extends Controller
         return $this->render('add-grade', compact('model'));
     }
 
-    public function actionUploadGradesExcel($course_id)
-    {
-        return $this->render('upload-grades-excel', compact('course_id'));
-    }
-
-    protected function findCourse($id)
-    {
-        return Course::findOne($id) ?? throw new NotFoundHttpException('Course not found.');
-    }
 }

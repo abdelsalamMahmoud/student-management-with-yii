@@ -55,7 +55,7 @@ class File extends \yii\db\ActiveRecord
         if ($this->validate()) {
             $file = UploadedFile::getInstance($this, 'filename');
             if ($file) {
-                $this->filename = $file->baseName; // Original name
+                $this->filename = $file->name;
                 $this->type = $file->type;
                 $newName = Yii::$app->security->generateRandomString() . '.' . $file->extension;
                 $this->filepath = '/uploads/' . $newName;

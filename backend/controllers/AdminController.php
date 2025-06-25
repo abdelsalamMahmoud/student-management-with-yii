@@ -1,7 +1,9 @@
 <?php
 namespace backend\controllers;
 
+use common\components\AccessRule;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,7 +16,18 @@ class AdminController extends Controller
     public function behaviors()
     {
         return [
-            'verbs' => [ 'class' => VerbFilter::class, 'actions' => ['delete-course' => ['POST']] ],
+            'access' => [
+                'class' => AccessControl::class,
+                'ruleConfig' => [
+                    'class' => AccessRule::class,
+                ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
         ];
     }
 

@@ -5,10 +5,6 @@ $this->title = "Students in {$course->title}";
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 
-<div class="mb-3">
-    <?= Html::a('Upload Grades via Excel', ['upload-grades-excel', 'course_id' => $course->id], ['class' => 'btn btn-success']) ?>
-</div>
-
 <table class="table">
     <thead>
     <tr>
