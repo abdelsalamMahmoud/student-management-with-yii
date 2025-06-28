@@ -33,12 +33,15 @@ class AdminController extends Controller
 
     public function actionDashboard()
     {
-        $students = User::find()->where(['role' => 'student'])->count();
-        $teachers = User::find()->where(['role' => 'teacher'])->count();
-        $courses = Course::find()->count();
-        $registrations = Registration::find()->count();
+        $studentCount = User::find()->where(['role' => 'student'])->count();
+        $teacherCount = User::find()->where(['role' => 'teacher'])->count();
+        $courseCount = Course::find()->count();
+        $registrationCount = Registration::find()->count();
 
-        return $this->render('dashboard', compact('students', 'teachers', 'courses', 'registrations'));
+        return $this->render('dashboard', [
+            'labels' => ['Students', 'Teachers', 'Courses', 'Registrations'],
+            'data' => [$studentCount, $teacherCount, $courseCount, $registrationCount],
+        ]);
     }
 
 
