@@ -41,13 +41,13 @@ return [
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                [
-                    'class' => 'yii\rest\UrlRule',
-                    'controller' => 'user',
-                    'pluralize' => false,// Maps to /user, not /users
-                ],
+                'GET user' => 'user/index',
+                'GET user/<id:\d+>' => 'user/view',
+                'POST user' => 'user/create',
+                'PUT user/<id:\d+>' => 'user/update',
+                'DELETE user/<id:\d+>' => 'user/delete',
             ],
-        ],
+            ],
         // Add db component if not defined in common/config/main.php
         'db' => [
             'class' => 'yii\db\Connection',
